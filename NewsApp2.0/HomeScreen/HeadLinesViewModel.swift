@@ -45,12 +45,16 @@ final class HeadLinesViewModel {
             favoriteNews.remove(at: index)
             favoriteNewsRelay.accept(favoriteNews)
         }
-        print("48484848488484848848")
-        UserDefaultsManager.shared.clearNewViewModel()
-        UserDefaultsManager.shared.saveNewViewModel(favoriteNewsRelay.value)
-        print("CHECK FAVORITE NEWS - \(favoriteNewsRelay.value.count)")
-        print(favoriteNewsRelay.value)
-        print("news was saved")
+        
+        favoriteNewsRelay
+            .debounce(.milliseconds(500), scheduler: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] updatedNews in
+                print("ОВО СОХРАНЯЕМ ДАННЫЕ В ЮД \(updatedNews)")
+                self?.userDefaultsManager.clearNewViewModel()
+                self?.userDefaultsManager.saveNewViewModel(updatedNews)
+                print("ОВО ДАННЫЕ СОХРАНЕНЫ \(updatedNews)")
+            })
+            .disposed(by: disposeBag)
     }
     
     private func deleteAll() {
@@ -60,9 +64,10 @@ final class HeadLinesViewModel {
         }
         
         headlinesRelay.accept(favoriteNews)
-        favoriteNewsRelay.accept([])
-        UserDefaultsManager.shared.clearNewViewModel()
-        print(favoriteNewsRelay.value.count) 
+        let emptyArray: [NewViewModel] = []
+        favoriteNewsRelay.accept(emptyArray)
+        userDefaultsManager.clearNewViewModel()
+        print("object was deleted")
     }
 }
 
@@ -110,8 +115,6 @@ extension HeadLinesViewModel: ViewModelBase {
                 self?.headlinesRelay.accept(news)
             })
             .disposed(by: disposeBag)
-        
-        
         
         return Output(news: headLines, favoriteNews: favoriteNewsDriver)
     }

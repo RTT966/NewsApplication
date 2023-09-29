@@ -39,6 +39,11 @@ final class UserDefaultsManager {
     func clearNewViewModel() {
         userDefaults.removeObject(forKey: Consts.userDefKey)
     }
+    
+    func synchronizeUserDefaults() {
+        userDefaults.synchronize()
+    }
+    
 }
 
 private extension UserDefaultsManager {
