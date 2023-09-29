@@ -34,12 +34,23 @@ final class HeadLinesViewModel {
         self.networkManager = networkManager
     }
     
-    // MARK: Methods
-    private func checkFavoriteNews(news: [NewViewModel]) {
-        let oldNews = favoriteNewsRelay.value
-        let favoriteNews = news.filter { $0.isFavourite }
-        favoriteNewsRelay.accept(favoriteNews)
-        
+    private func checkFavoriteNews(news: NewViewModel) {
+        var favoriteNews = favoriteNewsRelay.value
+        if news.isFavourite{
+            guard !favoriteNews.contains(news) else { return }
+            favoriteNews.append(news)
+            favoriteNewsRelay.accept(favoriteNews)
+        } else if !news.isFavourite {
+            guard let index = favoriteNews.firstIndex(where: { $0.title == news.title}) else { return }
+            favoriteNews.remove(at: index)
+            favoriteNewsRelay.accept(favoriteNews)
+        }
+        print("48484848488484848848")
+        UserDefaultsManager.shared.clearNewViewModel()
+        UserDefaultsManager.shared.saveNewViewModel(favoriteNewsRelay.value)
+        print("CHECK FAVORITE NEWS - \(favoriteNewsRelay.value.count)")
+        print(favoriteNewsRelay.value)
+        print("news was saved")
     }
     
     private func deleteAll() {
@@ -49,7 +60,9 @@ final class HeadLinesViewModel {
         }
         
         headlinesRelay.accept(favoriteNews)
-        checkFavoriteNews(news: favoriteNews)
+        favoriteNewsRelay.accept([])
+        UserDefaultsManager.shared.clearNewViewModel()
+        print(favoriteNewsRelay.value.count) 
     }
 }
 
@@ -71,7 +84,6 @@ extension HeadLinesViewModel: ViewModelBase {
         input.deleteAllFavorites
             .subscribe(onNext: { [weak self] _ in
                 self?.deleteAll()
-                self?.userDefaultsManager.clearNewViewModel()
             })
             .disposed(by: disposeBag)
         
@@ -99,6 +111,8 @@ extension HeadLinesViewModel: ViewModelBase {
             })
             .disposed(by: disposeBag)
         
+        
+        
         return Output(news: headLines, favoriteNews: favoriteNewsDriver)
     }
 }
@@ -110,8 +124,6 @@ extension HeadLinesViewModel: SelectFavoriteNewDelegate {
         guard let index = allNews.firstIndex(where: { $0.title == news.title }) else { return }
         allNews[index] = news
         headlinesRelay.accept(allNews)
-        checkFavoriteNews(news: allNews)
-        UserDefaultsManager.shared.clearNewViewModel()
-        UserDefaultsManager.shared.saveNewViewModel(favoriteNewsRelay.value)
+        checkFavoriteNews(news: news)
     }
 }

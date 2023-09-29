@@ -15,30 +15,23 @@ final class UserDefaultsManager {
     private init() {}
     
     func saveNewViewModel(_ viewModel: [NewViewModel]) {
-        let currentHash = viewModel.hashValue
-        let previusHash = userDefaults.integer(forKey: Consts.hashKey)
-        
-        if currentHash != previusHash {
             do {
                 let encodedData = try JSONEncoder().encode(viewModel)
                 userDefaults.set(encodedData, forKey: Consts.userDefKey)
+                print("\(viewModel) was saved")
             } catch {
                 print("Ошибка при кодировании и сохранении NewViewModel: \(error)")
             }
-        }
     }
     
     func loadNewViewModel() -> [NewViewModel]? {
         if let encodedData = userDefaults.data(forKey: Consts.userDefKey) {
-           
                 do {
                     let viewModel = try JSONDecoder().decode([NewViewModel].self, from: encodedData)
-                   
                     return viewModel
                 } catch {
                     print("Error decoding NewViewModel: \(error.localizedDescription)")
                 }
-            
         }
         return nil
     }
@@ -51,6 +44,5 @@ final class UserDefaultsManager {
 private extension UserDefaultsManager {
     enum Consts {
         static let userDefKey = "newViewModel"
-        static let hashKey = "DataHash"
     }
 }
