@@ -35,20 +35,22 @@ final class HeadLinesViewModel {
     }
     
     // MARK: Methods
-   private func checkFavoriteNews(news: [NewViewModel]) {
-       let favoriteNews = news.filter { $0.isFavourite }
-          favoriteNewsRelay.accept(favoriteNews)
+    private func checkFavoriteNews(news: [NewViewModel]) {
+        let oldNews = favoriteNewsRelay.value
+        let favoriteNews = news.filter { $0.isFavourite }
+        favoriteNewsRelay.accept(favoriteNews)
+        
     }
     
     private func deleteAll() {
-         var favoriteNews = headlinesRelay.value
-         for index in favoriteNews.indices {
-             favoriteNews[index].isFavourite = false
-         }
+        var favoriteNews = headlinesRelay.value
+        for index in favoriteNews.indices {
+            favoriteNews[index].isFavourite = false
+        }
         
-         headlinesRelay.accept(favoriteNews)
-         checkFavoriteNews(news: favoriteNews)
-     }
+        headlinesRelay.accept(favoriteNews)
+        checkFavoriteNews(news: favoriteNews)
+    }
 }
 
 // MARK: - ViewModelBase
@@ -105,7 +107,7 @@ extension HeadLinesViewModel: ViewModelBase {
 extension HeadLinesViewModel: SelectFavoriteNewDelegate {
     func updateFavoriteStatus(news: NewViewModel) {
         var allNews = headlinesRelay.value
-        guard let index = allNews.firstIndex(where: { $0.id == news.id}) else { return }
+        guard let index = allNews.firstIndex(where: { $0.title == news.title }) else { return }
         allNews[index] = news
         headlinesRelay.accept(allNews)
         checkFavoriteNews(news: allNews)

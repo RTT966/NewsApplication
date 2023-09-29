@@ -17,7 +17,7 @@ struct NewViewModel: Hashable, Equatable, Codable {
     }
     
     var description: String {
-         new.description ?? ""
+        new.description ?? ""
     }
     
     var author: String {
@@ -34,18 +34,18 @@ struct NewViewModel: Hashable, Equatable, Codable {
     
     var date: String {
         guard let dateStr = new.publishedAt else {return "" }
-
+        
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
         guard let newDate = dateFormatter.date(from: dateStr) else { return ""}
-            let outputDateFormatter = DateFormatter()
-            outputDateFormatter.dateFormat = "dd.MM.yyyy"
-            let formattedDate = outputDateFormatter.string(from: newDate)
-            return formattedDate
+        let outputDateFormatter = DateFormatter()
+        outputDateFormatter.dateFormat = "dd.MM.yyyy"
+        let formattedDate = outputDateFormatter.string(from: newDate)
+        return formattedDate
         
     }
     
     static func == (lhs: NewViewModel, rhs: NewViewModel) -> Bool {
         return lhs.title == rhs.title && lhs.author == rhs.author
-       }
+    }
 }

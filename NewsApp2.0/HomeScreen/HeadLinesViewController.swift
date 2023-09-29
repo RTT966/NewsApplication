@@ -48,7 +48,7 @@ final class HeadLinesViewController: UIViewController {
             make.edges.equalToSuperview()
         }
     }
-
+    
     private func bindViewModel() {
         let input = HeadLinesViewModel.Input(fetchNewTrigger: Observable.just(()), fetchFavoriteNewTrigger: Observable.just(()), deleteAllFavorites: Observable.never())
         let output = viewModel.transform(input: input)

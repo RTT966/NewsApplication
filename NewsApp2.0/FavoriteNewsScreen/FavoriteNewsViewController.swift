@@ -40,7 +40,6 @@ class FavoriteNewsViewController: UIViewController {
         super.viewDidLoad()
         bindViewModel()
         setupViews()
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: deleteAllButton)
     }
     
     
@@ -51,8 +50,6 @@ class FavoriteNewsViewController: UIViewController {
         output.favoriteNews
             .drive(tableView.rx.items(cellIdentifier: NewTableViewCell.identifier, cellType: NewTableViewCell.self)) { _, news, cell in
                 cell.configure(with: news)
-                print("hello")
-                print(news)
             }
             .disposed(by: disposeBag)
         
@@ -73,7 +70,7 @@ class FavoriteNewsViewController: UIViewController {
     }
     
     private func setupViews() {
-        title = "News"
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: deleteAllButton)
         view.addSubview(tableView)
         view.backgroundColor = .white
         setConstraints()

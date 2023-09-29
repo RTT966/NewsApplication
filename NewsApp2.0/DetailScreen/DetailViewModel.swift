@@ -44,8 +44,6 @@ extension DetailViewModel: ViewModelBase {
             .do(onNext: { [weak self] _ in
                 guard let self else { return }
                 selectedNew.isFavourite.toggle()
-                print("Detail VIew MODEL!*!*!*!*!*!*!")
-                print(selectedNew.isFavourite)
                 self.delegate?.updateFavoriteStatus(news: self.selectedNew)
                 selectedNewRelay.accept(selectedNew)
             })

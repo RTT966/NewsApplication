@@ -59,12 +59,12 @@ final class NewTableViewCell: UITableViewCell {
         authorNameLabel.text = viewModel.author
         dateLabel.text = viewModel.date
         //УСТАНОВКА КАРТИНКИ
-//        NewsNetworkManager.shared.getImage(urlStr: viewModel.urlImage) { [weak self] data in
-//            guard let data = data else { return }
-//            DispatchQueue.main.async {
-//                self?.newImage.setImage(image: UIImage(data: data))
-//            }
-//        }
+        //        NewsNetworkManager.shared.getImage(urlStr: viewModel.urlImage) { [weak self] data in
+        //            guard let data = data else { return }
+        //            DispatchQueue.main.async {
+        //                self?.newImage.setImage(image: UIImage(data: data))
+        //            }
+        //        }
     }
     
     private func setupView() {
