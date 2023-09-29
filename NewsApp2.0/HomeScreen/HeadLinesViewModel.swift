@@ -9,53 +9,84 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-protocol ViewModelBase {
-    associatedtype Input
-    associatedtype Output
-    
-    func transform(input: Input)-> Output
-}
-
 final class HeadLinesViewModel {
     
-    private let disposeBag = DisposeBag()
-    private let favoriteSubject = PublishSubject<NewViewModel>()
+    // MARK: Headlines News Screen
     private let headlinesRelay = BehaviorRelay<[NewViewModel]>(value: [])
-    
+    private let favoriteNewsRelay = BehaviorRelay<[NewViewModel]>(value: [])
     
     private var headLines: Driver<[NewViewModel]> {
         return headlinesRelay.asDriver()
     }
+    
+    // MARK: Favorite News Screen
+    private var favoriteNewsDriver: Driver<[NewViewModel]> {
+        return favoriteNewsRelay.asDriver()
+    }
+    
+    // MARK: Properties
+    private let disposeBag = DisposeBag()
     private let networkManager: NewsServiceType
-    private let converter = NewsConverter()
+    private let userDefaultsManager = UserDefaultsManager.shared
     
-    
+    // MARK: Init
     init(networkManager: NewsServiceType = NewsNetworkManager()) {
         self.networkManager = networkManager
     }
     
-    private func updateFavoriteStatus(news: NewViewModel) {
-        guard let index = headlinesRelay.value.firstIndex(where: {$0.id == news.id}) else { return }
-        
-        var updatedNews = headlinesRelay.value
-        updatedNews[index].isFavourite = news.isFavourite
-        headlinesRelay.accept(updatedNews)
+    // MARK: Methods
+   private func checkFavoriteNews(news: [NewViewModel]) {
+       let favoriteNews = news.filter { $0.isFavourite }
+          favoriteNewsRelay.accept(favoriteNews)
     }
     
+    private func deleteAll() {
+         var favoriteNews = headlinesRelay.value
+         for index in favoriteNews.indices {
+             favoriteNews[index].isFavourite = false
+         }
+        
+         headlinesRelay.accept(favoriteNews)
+         checkFavoriteNews(news: favoriteNews)
+     }
 }
 
 // MARK: - ViewModelBase
 extension HeadLinesViewModel: ViewModelBase {
     struct Input {
         let fetchNewTrigger: Observable<Void>
-        let favoriteNews: PublishSubject<NewViewModel>
+        let fetchFavoriteNewTrigger: Observable<Void>
+        let deleteAllFavorites: Observable<Void>
     }
     
     struct Output {
         let news: Driver<[NewViewModel]>
+        let favoriteNews: Driver<[NewViewModel]>
     }
     
     func transform(input: Input) -> Output {
+        
+        input.deleteAllFavorites
+            .subscribe(onNext: { [weak self] _ in
+                self?.deleteAll()
+                self?.userDefaultsManager.clearNewViewModel()
+            })
+            .disposed(by: disposeBag)
+        
+        input.fetchFavoriteNewTrigger
+            .flatMapLatest { [weak self] _ -> Observable<[NewViewModel]?> in
+                guard let self else { return .empty()}
+                if let news = self.userDefaultsManager.loadNewViewModel() {
+                    return .just(news)
+                } else {
+                    return .just([])
+                }
+            }
+            .subscribe(onNext: { [weak self] news in
+                guard let news else { return }
+                self?.favoriteNewsRelay.accept(news)
+            })
+            .disposed(by: disposeBag)
         
         input.fetchNewTrigger
             .flatMapLatest { [weak self] _ -> Observable<[NewViewModel]> in
@@ -66,12 +97,19 @@ extension HeadLinesViewModel: ViewModelBase {
             })
             .disposed(by: disposeBag)
         
-        input.favoriteNews
-            .subscribe(onNext: { [weak self] news in
-                self?.updateFavoriteStatus(news: news)
-            })
-            .disposed(by: disposeBag)
-        
-        return Output(news: headLines)
+        return Output(news: headLines, favoriteNews: favoriteNewsDriver)
+    }
+}
+
+//MARK: - SelectFavoriteNewDelegate
+extension HeadLinesViewModel: SelectFavoriteNewDelegate {
+    func updateFavoriteStatus(news: NewViewModel) {
+        var allNews = headlinesRelay.value
+        guard let index = allNews.firstIndex(where: { $0.id == news.id}) else { return }
+        allNews[index] = news
+        headlinesRelay.accept(allNews)
+        checkFavoriteNews(news: allNews)
+        UserDefaultsManager.shared.clearNewViewModel()
+        UserDefaultsManager.shared.saveNewViewModel(favoriteNewsRelay.value)
     }
 }

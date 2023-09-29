@@ -86,7 +86,6 @@ final class DetailViewController: UIViewController {
                 self?.authorLabel.text = news.author
                 self?.dateLabel.text = news.date
                 self?.addToFavouriteButton.isSelected = news.isFavourite
-                print(news.isFavourite)
                 self?.urlTextlabel.text = news.url
             })
         

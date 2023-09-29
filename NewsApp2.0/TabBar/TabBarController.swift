@@ -17,7 +17,7 @@ final class TabBarController: UITabBarController {
     private func setupTabs() {
         let viewModel = HeadLinesViewModel()
         let homeVC = createNav(with: "News", image: UIImage(systemName: "newspaper"), vc: HeadLinesViewController(viewModel: viewModel))
-        let favouriteVC = createNav(with: "Favourite", image: UIImage(systemName: "star.fill"), vc: FavoriteNewsViewController())
+        let favouriteVC = createNav(with: "Favourite", image: UIImage(systemName: "star.fill"), vc: FavoriteNewsViewController(viewModel: viewModel))
         
         self.setViewControllers([homeVC, favouriteVC], animated: true)
     }

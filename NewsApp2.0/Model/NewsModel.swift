@@ -14,7 +14,7 @@ struct NewsResponse: Decodable {
 }
 
 // MARK: - Article
-struct Article: Codable, Hashable {
+struct Article: Codable, Hashable{
     let author: String?
     let title: String
     let description: String?

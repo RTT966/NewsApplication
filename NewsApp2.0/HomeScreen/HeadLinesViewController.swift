@@ -10,8 +10,6 @@ import RxSwift
 
 final class HeadLinesViewController: UIViewController {
     
-    private let favoriteSubject = PublishSubject<NewViewModel>()
-    
     private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(NewTableViewCell.self, forCellReuseIdentifier: NewTableViewCell.identifier)
@@ -52,11 +50,11 @@ final class HeadLinesViewController: UIViewController {
     }
 
     private func bindViewModel() {
-        let input = HeadLinesViewModel.Input(fetchNewTrigger: Observable.just(()), favoriteNews: favoriteSubject)
+        let input = HeadLinesViewModel.Input(fetchNewTrigger: Observable.just(()), fetchFavoriteNewTrigger: Observable.just(()), deleteAllFavorites: Observable.never())
         let output = viewModel.transform(input: input)
         
         output.news
-            .drive(tableView.rx.items(cellIdentifier: NewTableViewCell.identifier, cellType: NewTableViewCell.self)) { _ , news, cell in
+            .drive(tableView.rx.items(cellIdentifier: NewTableViewCell.identifier, cellType: NewTableViewCell.self)) { _, news, cell in
                 cell.configure(with: news)
             }
             .disposed(by: disposeBag)
@@ -64,24 +62,16 @@ final class HeadLinesViewController: UIViewController {
         tableView.rx.modelSelected(NewViewModel.self)
             .subscribe(onNext: { [weak self] news in
                 let vm = DetailViewModel(selectedNew: news)
-                vm.delegate = self
+                vm.delegate = self?.viewModel
                 let vc = DetailViewController(viewModel: vm)
                 self?.navigationController?.pushViewController(vc, animated: true)
-                print("item selected \(news.title)")
             })
             .disposed(by: disposeBag)
         
         tableView.rx.itemSelected
             .subscribe(onNext: { [weak self] index in
-                
                 self?.tableView.deselectRow(at: index, animated: true)
             })
             .disposed(by: disposeBag)
-    }
-}
-
-extension HeadLinesViewController: SelectFavoriteNewDelegate {
-    func updateFavoriteStatus(news: NewViewModel) {
-        favoriteSubject.onNext(news)
     }
 }

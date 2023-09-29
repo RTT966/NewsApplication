@@ -7,10 +7,10 @@
 
 import UIKit
 
-struct NewViewModel: Hashable {
+struct NewViewModel: Hashable, Equatable, Codable {
     let new: Article
     var isFavourite: Bool = false
-    let id = UUID()
+    var id = UUID()
     
     var title: String {
         new.title
@@ -44,4 +44,8 @@ struct NewViewModel: Hashable {
             return formattedDate
         
     }
+    
+    static func == (lhs: NewViewModel, rhs: NewViewModel) -> Bool {
+        return lhs.title == rhs.title && lhs.author == rhs.author
+       }
 }
