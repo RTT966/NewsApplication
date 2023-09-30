@@ -9,15 +9,17 @@ import UIKit
 
 final class TabBarController: UITabBarController {
     
+    // MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTabs()
     }
     
+    // MARK: Methods
     private func setupTabs() {
         let viewModel = HeadLinesViewModel()
-        let homeVC = createNav(with: "News", image: UIImage(systemName: "newspaper"), vc: HeadLinesViewController(viewModel: viewModel))
-        let favouriteVC = createNav(with: "Favorite", image: UIImage(systemName: "star.fill"), vc: FavoriteNewsViewController(viewModel: viewModel))
+        let homeVC = createNav(with: Consts.homeVCTitle, image: Consts.homeVCImage, vc: HeadLinesViewController(viewModel: viewModel))
+        let favouriteVC = createNav(with: Consts.favoriteVCTitle, image: Consts.favoriteVCImage, vc: FavoriteNewsViewController(viewModel: viewModel))
         
         self.setViewControllers([homeVC, favouriteVC], animated: true)
     }
@@ -29,5 +31,15 @@ final class TabBarController: UITabBarController {
         vc.title = title
         nav.tabBarItem.image = image
         return nav
+    }
+}
+
+// MARK: - Consts
+private extension TabBarController {
+    enum Consts {
+        static let homeVCTitle = "News"
+        static let homeVCImage = UIImage(systemName: "newspaper")
+        static let favoriteVCTitle = "Favorite"
+        static let favoriteVCImage = UIImage(systemName: "star.fill")
     }
 }

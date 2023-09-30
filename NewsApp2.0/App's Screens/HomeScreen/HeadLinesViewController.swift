@@ -64,7 +64,7 @@ final class HeadLinesViewController: UIViewController, UITableViewDelegate {
     }
     
     private func bindViewModel() {
-        let input = HeadLinesViewModel.Input(fetchNewTrigger: Observable.just(()), fetchFavoriteNewTrigger: Observable.just(()), deleteAllFavorites: Observable.never(), paginationSubject: paginagionSubject)
+        let input = HeadLinesViewModel.Input(fetchNewTrigger: Observable.just(()), fetchFavoriteNewTrigger: Observable.just(()), deleteAllFavorites: Observable.never(), paginationSubject: paginagionSubject.skip(1))
         let output = viewModel.transform(input: input)
         
         output.error

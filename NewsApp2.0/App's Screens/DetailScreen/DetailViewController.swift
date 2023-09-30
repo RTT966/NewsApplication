@@ -50,7 +50,7 @@ final class DetailViewController: UIViewController {
         return label
     }()
     
-    private lazy var urlTextlabel: UILabel = {
+    private let urlTextlabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 10, weight: .semibold)
         label.textColor = .blue

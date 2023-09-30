@@ -11,6 +11,7 @@ import RxCocoa
 
 class FavoriteNewsViewController: UIViewController {
     
+    // MARK: Properies
     private let viewModel: HeadLinesViewModel
     private let disposeBag = DisposeBag()
     
@@ -27,6 +28,7 @@ class FavoriteNewsViewController: UIViewController {
         return button
     }()
     
+    // MARK: Init
     init(viewModel: HeadLinesViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -36,12 +38,14 @@ class FavoriteNewsViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         bindViewModel()
         setupViews()
     }
     
+    // MARK: Methods
     private func bindViewModel() {
         let input = HeadLinesViewModel.Input(fetchNewTrigger: Observable.never(), fetchFavoriteNewTrigger: Observable.never(), deleteAllFavorites: deleteAllButton.rx.tap.asObservable(), paginationSubject: Observable.never())
         let output = viewModel.transform(input: input)
