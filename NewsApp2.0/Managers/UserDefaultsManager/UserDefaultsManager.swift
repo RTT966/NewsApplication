@@ -23,7 +23,7 @@ final class UserDefaultsManager: UserDefaultsService {
                 let encodedData = try JSONEncoder().encode(viewModel)
                 userDefaults.set(encodedData, forKey: Consts.userDefKey)
             } catch {
-                print("Ошибка при кодировании и сохранении NewViewModel: \(error)")
+                print("error coding and saving: \(error)")
             }
     }
     

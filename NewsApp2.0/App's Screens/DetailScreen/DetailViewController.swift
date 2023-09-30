@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import SafariServices
 
 final class DetailViewController: UIViewController {
     
@@ -49,14 +50,15 @@ final class DetailViewController: UIViewController {
         label.font = .systemFont(ofSize: 15, weight: .thin)
         return label
     }()
-    
-    private let urlTextlabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 10, weight: .semibold)
-        label.textColor = .blue
-        label.numberOfLines = 0
-        label.isUserInteractionEnabled = true
-        return label
+
+    private let urlTextView: UITextView = {
+        let textView = UITextView()
+        textView.isEditable = false
+        textView.isSelectable = true
+        textView.dataDetectorTypes = .link
+        textView.linkTextAttributes = [ .foregroundColor: UIColor.blue,
+                                        .underlineColor: NSUnderlineStyle.single.rawValue]
+        return textView
     }()
     
     // MARK: Init
@@ -85,29 +87,32 @@ final class DetailViewController: UIViewController {
             .drive(onNext: { [weak self] news in
                 self?.authorLabel.text = news.author
                 self?.dateLabel.text = news.date
+                self?.newTextView.text = news.description
                 self?.addToFavouriteButton.isSelected = news.isFavourite
-                self?.urlTextlabel.text = news.url
+                self?.urlTextView.text = news.url
             })
-        
             .disposed(by: disposeBag)
     }
-    
+
     private func setupViews() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: addToFavouriteButton)
         title = "News"
         view.backgroundColor = .white
+        urlTextView.delegate = self
+        
         [
             newImage,
             newTextView,
             authorLabel,
             dateLabel,
-            urlTextlabel
+            urlTextView
         ].forEach { view.addSubview($0) }
         
         setConstraints()
     }
     
     private func setConstraints() {
+        
         newImage.snp.makeConstraints { make in
             make.height.equalTo(300)
             make.top.equalToSuperview().offset(100)
@@ -130,12 +135,22 @@ final class DetailViewController: UIViewController {
             make.top.equalTo(authorLabel.snp.bottom).offset(10)
             make.leading.equalTo(authorLabel.snp.leading)
         }
-        
-        urlTextlabel.snp.makeConstraints { make in
+    
+        urlTextView.snp.makeConstraints { make in
             make.top.equalTo(dateLabel.snp.bottom).offset(10)
-            make.leading.equalToSuperview().offset(10)
-            make.trailing.equalToSuperview().offset(-10)
-            make.width.equalToSuperview()
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.height.equalTo(100)
         }
+    }
+}
+
+    // MARK: - UITextViewDelegate
+extension DetailViewController: UITextViewDelegate {
+    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+        let safariVC = SFSafariViewController(url: URL)
+        safariVC.modalPresentationStyle = .formSheet
+        present(safariVC, animated: true)
+        return false
     }
 }

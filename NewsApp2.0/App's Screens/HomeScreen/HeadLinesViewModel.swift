@@ -67,11 +67,9 @@ final class HeadLinesViewModel {
         let emptyArray: [NewViewModel] = []
         favoriteNewsRelay.accept(emptyArray)
         userDefaultsManager.clearNewViewModel()
-        print("object was deleted")
     }
     
     private func newArt() {
-        print("paginationSubject was triggered")
         networkManager.fetchTopHeadlines()
             .subscribe(onNext: { [weak self] article in
                 guard let self else { return }
@@ -136,6 +134,8 @@ extension HeadLinesViewModel: ViewModelBase {
                 return self.networkManager.fetchTopHeadlines()
             }.subscribe(onNext: { [weak self] news in
                 self?.headlinesRelay.accept(news)
+            }, onError: { error in
+                self.errorSubject.onNext(error)
             })
             .disposed(by: disposeBag)
         

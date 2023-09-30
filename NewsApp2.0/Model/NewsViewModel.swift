@@ -21,7 +21,8 @@ struct NewViewModel: Hashable, Equatable, Codable {
     }
     
     var author: String {
-        "Published by \(new.author ?? "Free sources")"
+        guard let author = new.author else { return "Published Free sources"}
+        return author.isEmpty ? "Published Free sources" : author
     }
     
     var urlImage: String {

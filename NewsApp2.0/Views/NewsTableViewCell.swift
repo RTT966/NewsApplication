@@ -56,8 +56,8 @@ final class NewTableViewCell: UITableViewCell {
     // MARK: Methods
     func configure(with viewModel: NewViewModel) {
         titleLable.text = viewModel.title
-        authorNameLabel.text = viewModel.author
         dateLabel.text = viewModel.date
+        authorNameLabel.text = viewModel.author
         //УСТАНОВКА КАРТИНКИ
         //        NewsNetworkManager.shared.getImage(urlStr: viewModel.urlImage) { [weak self] data in
         //            guard let data = data else { return }

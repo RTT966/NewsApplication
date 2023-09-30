@@ -8,7 +8,7 @@
 import UIKit
 import RxSwift
 
-final class HeadLinesViewController: UIViewController, UITableViewDelegate {
+final class HeadLinesViewController: UIViewController {
     
     // MARK: Properties
     let paginagionSubject = PublishSubject<Void>()
@@ -96,7 +96,8 @@ final class HeadLinesViewController: UIViewController, UITableViewDelegate {
     }
 }
 
-extension HeadLinesViewController: UIScrollViewDelegate {
+// MARK: - UIScrollViewDelegate & UITableViewDelegate
+extension HeadLinesViewController: UIScrollViewDelegate, UITableViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let scrollViewHeight = scrollView.frame.size.height
         let contentHeight = scrollView.contentSize.height
