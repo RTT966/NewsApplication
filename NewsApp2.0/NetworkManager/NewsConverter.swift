@@ -13,6 +13,7 @@ final class NewsConverter {
         let news = Array(Set(articles))
             .filter { $0.title != "[Removed]"}
             .compactMap { NewViewModel(new: $0)}
+            .sorted(by: { $0.title < $1.title})
         
         return Observable.just(news)
     }

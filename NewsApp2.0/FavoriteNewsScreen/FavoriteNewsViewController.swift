@@ -42,9 +42,8 @@ class FavoriteNewsViewController: UIViewController {
         setupViews()
     }
     
-    
     private func bindViewModel() {
-        let input = HeadLinesViewModel.Input(fetchNewTrigger: Observable.never(), fetchFavoriteNewTrigger: Observable.never(), deleteAllFavorites: deleteAllButton.rx.tap.asObservable())
+        let input = HeadLinesViewModel.Input(fetchNewTrigger: Observable.never(), fetchFavoriteNewTrigger: Observable.never(), deleteAllFavorites: deleteAllButton.rx.tap.asObservable(), paginationSubject: Observable.never())
         let output = viewModel.transform(input: input)
         
         output.favoriteNews

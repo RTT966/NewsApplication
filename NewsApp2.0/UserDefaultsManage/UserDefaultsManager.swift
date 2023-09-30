@@ -8,17 +8,20 @@
 import Foundation
 import RxSwift
 
-final class UserDefaultsManager {
-    static let shared = UserDefaultsManager()
-    private let userDefaults = UserDefaults.standard
+protocol UserDefaultsService {
+    func saveNewViewModel(_ viewModel: [NewViewModel])
+    func loadNewViewModel() -> [NewViewModel]?
+    func clearNewViewModel()
+}
+
+final class UserDefaultsManager: UserDefaultsService {
     
-    private init() {}
+    private let userDefaults = UserDefaults.standard
     
     func saveNewViewModel(_ viewModel: [NewViewModel]) {
             do {
                 let encodedData = try JSONEncoder().encode(viewModel)
                 userDefaults.set(encodedData, forKey: Consts.userDefKey)
-                print("\(viewModel) was saved")
             } catch {
                 print("Ошибка при кодировании и сохранении NewViewModel: \(error)")
             }
@@ -39,11 +42,6 @@ final class UserDefaultsManager {
     func clearNewViewModel() {
         userDefaults.removeObject(forKey: Consts.userDefKey)
     }
-    
-    func synchronizeUserDefaults() {
-        userDefaults.synchronize()
-    }
-    
 }
 
 private extension UserDefaultsManager {

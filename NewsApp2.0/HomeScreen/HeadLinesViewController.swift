@@ -8,8 +8,14 @@
 import UIKit
 import RxSwift
 
-final class HeadLinesViewController: UIViewController {
+final class HeadLinesViewController: UIViewController, UITableViewDelegate {
     
+    // MARK: Properties
+    let paginagionSubject = PublishSubject<Void>()
+    private let disposeBag = DisposeBag()
+    private let viewModel: HeadLinesViewModel
+    
+    // MARK: TableView
     private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(NewTableViewCell.self, forCellReuseIdentifier: NewTableViewCell.identifier)
@@ -17,10 +23,7 @@ final class HeadLinesViewController: UIViewController {
         return tableView
     }()
     
-    private let disposeBag = DisposeBag()
-    private let viewModel: HeadLinesViewModel
-    
-    
+    // MARK: Init
     init(viewModel: HeadLinesViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -30,17 +33,19 @@ final class HeadLinesViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
         bindViewModel()
     }
     
+    // MARK: Methods
     private func setupViews() {
-        title = "News"
         view.addSubview(tableView)
         view.backgroundColor = .white
         setConstraints()
+        tableView.delegate = self
     }
     
     private func setConstraints() {
@@ -49,9 +54,24 @@ final class HeadLinesViewController: UIViewController {
         }
     }
     
+    private func showAlert() {
+        let alert = UIAlertController(title: "Что-то пошло не так.", message: "",  preferredStyle: .alert)
+        let action = UIAlertAction(title: "Ok", style: .default)
+        alert.addAction(action)
+        DispatchQueue.main.async {
+            self.present(alert, animated: true)
+        }
+    }
+    
     private func bindViewModel() {
-        let input = HeadLinesViewModel.Input(fetchNewTrigger: Observable.just(()), fetchFavoriteNewTrigger: Observable.just(()), deleteAllFavorites: Observable.never())
+        let input = HeadLinesViewModel.Input(fetchNewTrigger: Observable.just(()), fetchFavoriteNewTrigger: Observable.just(()), deleteAllFavorites: Observable.never(), paginationSubject: paginagionSubject)
         let output = viewModel.transform(input: input)
+        
+        output.error
+            .subscribe(onNext: { [weak self] _ in
+                self?.showAlert()
+            })
+            .disposed(by: disposeBag)
         
         output.news
             .drive(tableView.rx.items(cellIdentifier: NewTableViewCell.identifier, cellType: NewTableViewCell.self)) { _, news, cell in
@@ -73,5 +93,17 @@ final class HeadLinesViewController: UIViewController {
                 self?.tableView.deselectRow(at: index, animated: true)
             })
             .disposed(by: disposeBag)
+    }
+}
+
+extension HeadLinesViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let scrollViewHeight = scrollView.frame.size.height
+        let contentHeight = scrollView.contentSize.height
+        let yOffset = scrollView.contentOffset.y
+        
+        if yOffset + scrollViewHeight + 200 >= contentHeight {
+            paginagionSubject.onNext(())
+        }
     }
 }
