@@ -120,7 +120,7 @@ final class DetailViewController: UIViewController {
         title = "News"
         view.backgroundColor = .white
         
-        scrollView.contentSize = self.view.bounds.size
+        scrollView.contentSize = .init(width: self.view.frame.width, height: view.frame.height * 1.5)
         view.addSubview(scrollView)
         
         [
