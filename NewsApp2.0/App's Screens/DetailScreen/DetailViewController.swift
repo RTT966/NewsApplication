@@ -17,7 +17,8 @@ final class DetailViewController: UIViewController {
     // MARK: Properties
     private let viewModel: DetailViewModel
     private let disposeBag = DisposeBag()
-    private let scrollView = UIScrollView()
+    
+    private let scrollView: UIScrollView = UIScrollView()
     
     // MARK: Outlets
     private let newImage = ShadowImageView()
@@ -52,7 +53,7 @@ final class DetailViewController: UIViewController {
         label.font = .systemFont(ofSize: 15, weight: .thin)
         return label
     }()
-
+    
     private let urlTextView: UITextView = {
         let textView = UITextView()
         textView.isEditable = false
@@ -80,7 +81,22 @@ final class DetailViewController: UIViewController {
         print("hello pes")
         bindViewModel()
         setupViews()
+        scrollView.delegate = self
     }
+    
+//    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+//        super.viewWillTransition(to: size, with: coordinator)
+//
+//        coordinator.animate(alongsideTransition: { [weak self] _ in
+//            self?.updateLayoutForOrientation(size: size)
+//        }, completion: nil)
+//    }
+//
+//    private func updateLayoutForOrientation(size: CGSize) {
+//        scrollView.snp.remakeConstraints { make in
+//            make.edges.equalToSuperview()
+//        }
+//    }
     
     // MARK: Methods
     private func bindViewModel() {
@@ -98,12 +114,14 @@ final class DetailViewController: UIViewController {
             })
             .disposed(by: disposeBag)
     }
-
+    
     private func setupViews() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: addToFavouriteButton)
         title = "News"
         view.backgroundColor = .white
-        urlTextView.delegate = self
+        
+        scrollView.contentSize = self.view.bounds.size
+        view.addSubview(scrollView)
         
         [
             newImage,
@@ -111,24 +129,28 @@ final class DetailViewController: UIViewController {
             authorLabel,
             dateLabel,
             urlTextView
-        ].forEach { view.addSubview($0) }
+        ].forEach { scrollView.addSubview($0) }
         
         setConstraints()
     }
     
     private func setConstraints() {
         
+        scrollView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
         newImage.snp.makeConstraints { make in
             make.height.equalTo(300)
-            make.top.equalToSuperview().offset(100)
-            make.leading.equalToSuperview().offset(15)
-            make.trailing.equalToSuperview().offset(-15)
+            make.width.equalToSuperview().multipliedBy(0.95)
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().offset(25)
         }
         
         newTextView.snp.makeConstraints { make in
-            make.top.equalTo(newImage.snp.bottom)
-            make.leading.equalToSuperview().offset(15)
-            make.trailing.equalToSuperview().offset(-15)
+            make.top.equalTo(newImage.snp.bottom).offset(20)
+            make.centerX.equalTo(newImage.snp.centerX)
+            make.width.equalToSuperview().multipliedBy(0.85)
         }
         
         authorLabel.snp.makeConstraints { make in
@@ -140,17 +162,16 @@ final class DetailViewController: UIViewController {
             make.top.equalTo(authorLabel.snp.bottom).offset(10)
             make.leading.equalTo(authorLabel.snp.leading)
         }
-    
+        
         urlTextView.snp.makeConstraints { make in
             make.top.equalTo(dateLabel.snp.bottom).offset(10)
-            make.leading.equalToSuperview()
-            make.trailing.equalToSuperview()
             make.height.equalTo(100)
+            make.width.equalToSuperview().multipliedBy(0.95)
         }
     }
 }
 
-    // MARK: - UITextViewDelegate
+// MARK: - UITextViewDelegate
 extension DetailViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
         let safariVC = SFSafariViewController(url: URL)
