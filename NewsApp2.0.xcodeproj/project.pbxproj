@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8E45AC372AC8CDAA00D8A88C /* UIView + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E45AC362AC8CDAA00D8A88C /* UIView + Ext.swift */; };
+		8E45AC392AC96A2A00D8A88C /* UIVIewController + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E45AC382AC96A2A00D8A88C /* UIVIewController + Ext.swift */; };
 		8E4D055F2AC6B3CE00F47E60 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E4D055E2AC6B3CE00F47E60 /* AppDelegate.swift */; };
 		8E4D05612AC6B3CE00F47E60 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E4D05602AC6B3CE00F47E60 /* SceneDelegate.swift */; };
 		8E4D05632AC6B3CE00F47E60 /* HeadLinesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E4D05622AC6B3CE00F47E60 /* HeadLinesViewController.swift */; };
@@ -32,6 +34,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8E45AC362AC8CDAA00D8A88C /* UIView + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView + Ext.swift"; sourceTree = "<group>"; };
+		8E45AC382AC96A2A00D8A88C /* UIVIewController + Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIVIewController + Ext.swift"; sourceTree = "<group>"; };
 		8E4D055B2AC6B3CE00F47E60 /* NewsApp2.0.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NewsApp2.0.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E4D055E2AC6B3CE00F47E60 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8E4D05602AC6B3CE00F47E60 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -88,6 +92,15 @@
 			path = Managers;
 			sourceTree = "<group>";
 		};
+		8E45AC352AC8CD9500D8A88C /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				8E45AC362AC8CDAA00D8A88C /* UIView + Ext.swift */,
+				8E45AC382AC96A2A00D8A88C /* UIVIewController + Ext.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		8E4D05522AC6B3CE00F47E60 = {
 			isa = PBXGroup;
 			children = (
@@ -113,6 +126,7 @@
 				8E4D059E2AC6E89200F47E60 /* TabBar */,
 				8E4D05932AC6C73E00F47E60 /* Views */,
 				8E4D05812AC6B57000F47E60 /* Model */,
+				8E45AC352AC8CD9500D8A88C /* Extensions */,
 				8E4D057C2AC6B40F00F47E60 /* App'sDelegates */,
 				8E4D05672AC6B3CF00F47E60 /* Assets.xcassets */,
 				8E4D05692AC6B3CF00F47E60 /* LaunchScreen.storyboard */,
@@ -294,6 +308,8 @@
 				8E4D05A32AC6E92E00F47E60 /* FavoriteNewsViewController.swift in Sources */,
 				8E4D059A2AC6CA9300F47E60 /* DetailViewController.swift in Sources */,
 				8E4D05632AC6B3CE00F47E60 /* HeadLinesViewController.swift in Sources */,
+				8E45AC372AC8CDAA00D8A88C /* UIView + Ext.swift in Sources */,
+				8E45AC392AC96A2A00D8A88C /* UIVIewController + Ext.swift in Sources */,
 				8E4D058A2AC6B71800F47E60 /* HeadLinesViewModel.swift in Sources */,
 				8E4D05872AC6B59D00F47E60 /* NewsViewModel.swift in Sources */,
 				8E4D05922AC6BE1A00F47E60 /* NewsConverter.swift in Sources */,

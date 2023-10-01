@@ -55,6 +55,7 @@ final class DetailViewController: UIViewController {
         let textView = UITextView()
         textView.isEditable = false
         textView.isSelectable = true
+        textView.font = .systemFont(ofSize: 15, weight: .semibold)
         textView.dataDetectorTypes = .link
         textView.linkTextAttributes = [ .foregroundColor: UIColor.blue,
                                         .underlineColor: NSUnderlineStyle.single.rawValue]

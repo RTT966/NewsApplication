@@ -8,10 +8,14 @@
 import UIKit
 import RxSwift
 
+protocol NavigateToDetailScreenProtocol {
+    func navigateToDetailScreen(with news: NewViewModel, delegate: SelectFavoriteNewDelegate?)
+}
+
 final class HeadLinesViewController: UIViewController {
     
     // MARK: Properties
-    let paginagionSubject = PublishSubject<Void>()
+    private let paginagionSubject = PublishSubject<Void>()
     private let disposeBag = DisposeBag()
     private let viewModel: HeadLinesViewModel
     
@@ -44,6 +48,7 @@ final class HeadLinesViewController: UIViewController {
     private func setupViews() {
         view.addSubview(tableView)
         view.backgroundColor = .white
+        tableView.refreshControl = UIRefreshControl()
         setConstraints()
         tableView.delegate = self
     }
@@ -54,22 +59,17 @@ final class HeadLinesViewController: UIViewController {
         }
     }
     
-    private func showAlert() {
-        let alert = UIAlertController(title: "Что-то пошло не так.", message: "",  preferredStyle: .alert)
-        let action = UIAlertAction(title: "Ok", style: .default)
-        alert.addAction(action)
-        DispatchQueue.main.async {
-            self.present(alert, animated: true)
-        }
-    }
-    
     private func bindViewModel() {
         let input = HeadLinesViewModel.Input(fetchNewTrigger: Observable.just(()), fetchFavoriteNewTrigger: Observable.just(()), deleteAllFavorites: Observable.never(), paginationSubject: paginagionSubject.skip(1))
         let output = viewModel.transform(input: input)
         
+        output.isLoadingRelay
+            .bind(to: self.view.rx.isLoading)
+            .disposed(by: disposeBag)
+
         output.error
             .subscribe(onNext: { [weak self] _ in
-                self?.showAlert()
+                self?.showErrorAlert()
             })
             .disposed(by: disposeBag)
         
@@ -81,10 +81,7 @@ final class HeadLinesViewController: UIViewController {
         
         tableView.rx.modelSelected(NewViewModel.self)
             .subscribe(onNext: { [weak self] news in
-                let vm = DetailViewModel(selectedNew: news)
-                vm.delegate = self?.viewModel
-                let vc = DetailViewController(viewModel: vm)
-                self?.navigationController?.pushViewController(vc, animated: true)
+                self?.navigateToDetailScreen(with: news, delegate: self?.viewModel)
             })
             .disposed(by: disposeBag)
         
@@ -106,5 +103,15 @@ extension HeadLinesViewController: UIScrollViewDelegate, UITableViewDelegate {
         if yOffset + scrollViewHeight + 200 >= contentHeight {
             paginagionSubject.onNext(())
         }
+    }
+}
+
+// MARK: - Navigation Protocol 
+extension HeadLinesViewController: NavigateToDetailScreenProtocol {
+    func navigateToDetailScreen(with news: NewViewModel, delegate: SelectFavoriteNewDelegate?) {
+        let vm = DetailViewModel(selectedNew: news)
+        vm.delegate = delegate
+        let vc = DetailViewController(viewModel: vm)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 }

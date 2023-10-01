@@ -58,10 +58,7 @@ class FavoriteNewsViewController: UIViewController {
         
         tableView.rx.modelSelected(NewViewModel.self)
             .subscribe(onNext: { [weak self] news in
-                let vm = DetailViewModel(selectedNew: news)
-                vm.delegate = self?.viewModel
-                let vc = DetailViewController(viewModel: vm)
-                self?.navigationController?.pushViewController(vc, animated: true)
+                self?.navigateToDetailScreen(with: news, delegate: self?.viewModel)
             })
             .disposed(by: disposeBag)
         
@@ -86,3 +83,12 @@ class FavoriteNewsViewController: UIViewController {
     }
 }
 
+// MARK: - Navigation Protocol 
+extension FavoriteNewsViewController: NavigateToDetailScreenProtocol {
+    func navigateToDetailScreen(with news: NewViewModel, delegate: SelectFavoriteNewDelegate?) {
+        let vm = DetailViewModel(selectedNew: news)
+        vm.delegate = delegate
+        let vc = DetailViewController(viewModel: vm)
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+}

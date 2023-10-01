@@ -15,6 +15,7 @@ final class HeadLinesViewModel {
     private let headlinesRelay = BehaviorRelay<[NewViewModel]>(value: [])
     private let favoriteNewsRelay = BehaviorRelay<[NewViewModel]>(value: [])
     private let errorSubject = PublishSubject<Error>()
+    private let isLoadingRelay = BehaviorRelay<Bool>(value: true)
     
     private var headLines: Driver<[NewViewModel]> {
         return headlinesRelay.asDriver()
@@ -94,14 +95,16 @@ extension HeadLinesViewModel: ViewModelBase {
         let news: Driver<[NewViewModel]>
         let favoriteNews: Driver<[NewViewModel]>
         let error: Observable<Error>
+        let isLoadingRelay: BehaviorRelay<Bool>
     }
     
     func transform(input: Input) -> Output {
         
         input.paginationSubject
-            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
+            .throttle(.seconds(3), scheduler: MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
                 self?.newArt()
+                print("zagruzka nachalas'")
             },onError: { error in
                 self.errorSubject.onNext(error)
             })
@@ -134,12 +137,14 @@ extension HeadLinesViewModel: ViewModelBase {
                 return self.networkManager.fetchTopHeadlines()
             }.subscribe(onNext: { [weak self] news in
                 self?.headlinesRelay.accept(news)
+                self?.isLoadingRelay.accept(false)
             }, onError: { error in
                 self.errorSubject.onNext(error)
+                self.isLoadingRelay.accept(false)
             })
             .disposed(by: disposeBag)
         
-        return Output(news: headLines, favoriteNews: favoriteNewsDriver, error: errorSubject)
+        return Output(news: headLines, favoriteNews: favoriteNewsDriver, error: errorSubject, isLoadingRelay: isLoadingRelay)
     }
 }
 

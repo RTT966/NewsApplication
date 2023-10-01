@@ -14,7 +14,7 @@ protocol NewsServiceType {
 
 final class NewsNetworkManager: NewsServiceType {
     
-    private var currentPage = 0
+    private var currentPage = 1
     private let converter = NewsConverter()
     
     private func getTopNews()-> Observable <[Article]> {
@@ -31,8 +31,10 @@ final class NewsNetworkManager: NewsServiceType {
     }
     
     func fetchTopHeadlines() -> Observable<[NewViewModel]> {
-        currentPage += 1
         return getTopNews()
+            .do(onNext: { [weak self] _ in
+                self?.currentPage += 1
+            })
             .flatMap { articles in
                 return self.converter.convertNews(articles: articles)
             }
