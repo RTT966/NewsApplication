@@ -10,7 +10,7 @@ import UIKit
 extension UIViewController {
     func showErrorAlert(completion: (() -> Void)? = nil) {
         let alert = UIAlertController(title: "Проверьте интернет соединение", message: "",  preferredStyle: .alert)
-        let action = UIAlertAction(title: "Повторить", style: .default) { _ in
+        let action = UIAlertAction(title: "Ок", style: .default) { _ in
             completion?()
         }
         alert.addAction(action)

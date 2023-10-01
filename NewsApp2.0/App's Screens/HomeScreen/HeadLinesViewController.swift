@@ -48,7 +48,6 @@ final class HeadLinesViewController: UIViewController {
     private func setupViews() {
         view.addSubview(tableView)
         view.backgroundColor = .white
-        tableView.refreshControl = UIRefreshControl()
         setConstraints()
         tableView.delegate = self
     }

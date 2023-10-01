@@ -104,7 +104,6 @@ extension HeadLinesViewModel: ViewModelBase {
             .throttle(.seconds(3), scheduler: MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
                 self?.newArt()
-                print("zagruzka nachalas'")
             },onError: { error in
                 self.errorSubject.onNext(error)
             })

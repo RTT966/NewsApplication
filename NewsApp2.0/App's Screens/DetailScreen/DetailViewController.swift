@@ -78,25 +78,10 @@ final class DetailViewController: UIViewController {
     // MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("hello pes")
         bindViewModel()
         setupViews()
         scrollView.delegate = self
     }
-    
-//    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-//        super.viewWillTransition(to: size, with: coordinator)
-//
-//        coordinator.animate(alongsideTransition: { [weak self] _ in
-//            self?.updateLayoutForOrientation(size: size)
-//        }, completion: nil)
-//    }
-//
-//    private func updateLayoutForOrientation(size: CGSize) {
-//        scrollView.snp.remakeConstraints { make in
-//            make.edges.equalToSuperview()
-//        }
-//    }
     
     // MARK: Methods
     private func bindViewModel() {
