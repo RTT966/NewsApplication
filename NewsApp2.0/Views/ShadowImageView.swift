@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Kingfisher
 
 final class ShadowImageView: UIView {
     
@@ -49,8 +50,10 @@ final class ShadowImageView: UIView {
     }
     
     // MARK: Methods
-    func setImage(image: UIImage?) {
-        imageView.image = image
+    func setImage(url: String?) {
+        guard let urlStr = url else { return }
+        let url = URL(string: urlStr)
+        imageView.kf.setImage(with: url)
     }
     
     private func setupView() {
@@ -62,13 +65,15 @@ final class ShadowImageView: UIView {
     
     private func setConstraints() {
         baseView.snp.makeConstraints { make in
-            make.leading.top.equalToSuperview().offset(10)
-            make.trailing.bottom.equalToSuperview().offset(-10)
+            make.leading.top.equalToSuperview()
+            make.trailing.bottom.equalToSuperview()
+            make.height.width.equalToSuperview()
         }
         
         imageView.snp.makeConstraints { make in
-            make.leading.top.equalToSuperview().offset(10)
-            make.trailing.bottom.equalToSuperview().offset(-10)
+            make.leading.top.equalToSuperview()
+            make.trailing.bottom.equalToSuperview()
+            make.height.width.equalToSuperview()
         }
     }
 }

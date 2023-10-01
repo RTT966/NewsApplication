@@ -10,12 +10,14 @@ import SnapKit
 import RxSwift
 import RxCocoa
 import SafariServices
+import Kingfisher
 
 final class DetailViewController: UIViewController {
     
     // MARK: Properties
     private let viewModel: DetailViewModel
     private let disposeBag = DisposeBag()
+    private let scrollView = UIScrollView()
     
     // MARK: Outlets
     private let newImage = ShadowImageView()
@@ -75,6 +77,7 @@ final class DetailViewController: UIViewController {
     // MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("hello pes")
         bindViewModel()
         setupViews()
     }
@@ -91,6 +94,7 @@ final class DetailViewController: UIViewController {
                 self?.newTextView.text = news.description
                 self?.addToFavouriteButton.isSelected = news.isFavourite
                 self?.urlTextView.text = news.url
+                self?.newImage.setImage(url: news.urlImage)
             })
             .disposed(by: disposeBag)
     }

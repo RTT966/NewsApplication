@@ -50,7 +50,7 @@ final class NewTableViewCell: UITableViewCell {
         titleLable.text = nil
         authorNameLabel.text = nil
         dateLabel.text = nil
-        newImage.setImage(image: nil)
+        newImage.setImage(url: nil)
     }
     
     // MARK: Methods
@@ -58,13 +58,7 @@ final class NewTableViewCell: UITableViewCell {
         titleLable.text = viewModel.title
         dateLabel.text = viewModel.date
         authorNameLabel.text = viewModel.author
-        //УСТАНОВКА КАРТИНКИ
-        //        NewsNetworkManager.shared.getImage(urlStr: viewModel.urlImage) { [weak self] data in
-        //            guard let data = data else { return }
-        //            DispatchQueue.main.async {
-        //                self?.newImage.setImage(image: UIImage(data: data))
-        //            }
-        //        }
+        newImage.setImage(url: viewModel.urlImage)
     }
     
     private func setupView() {
